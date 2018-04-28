@@ -4,7 +4,8 @@
   "description": "download-from-boxue-by-electron",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "download": "/bin/bash ./dest/dd"
   },
   "repository": {
     "type": "git",

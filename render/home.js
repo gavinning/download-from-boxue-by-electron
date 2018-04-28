@@ -1,3 +1,4 @@
+const fs = require('fs')
 const path = require('path')
 const $ = require('jquery')
 const electron = require('electron')
@@ -52,48 +53,101 @@ function createSpiderList(list) {
     })
     spider.html(ul)
 }
-熊
+
 // 获取视频详情
 // 包括title和url
-function getVideo(win, urls) {
-    var arr = urls.slice(0, 3)
+function getVideo(win, list) {
+    var arr = list.slice(0)
 
     return function () {
         if (arr.length === 0) {
-            return
+            // 发布视频信息采集完成事件
+            return $(document).trigger('video.done')
         }
 
-        let url = arr.shift()
-        win.loadURL(url)
+        let item = arr.shift()
+        win.loadURL(item.url)
     }
 }
 
 window.onload = () => {
-    let list = createListWindow()
-    let target = createVideoWindow()
+    let listWin = createListWindow()
+    let targetWin = createVideoWindow()
+    let msg = $('#msg')
     let getList = $('#getList')
     let running = $('#running')
-    let videos, fetchVideo
+    let videos, targetVideos = [], fetchVideo
 
+    // 接收视频列表
     ipcMain.on('videolist', function (event, list) {
+        videos = list
         // 创建可视列表
         createSpiderList(list)
         // 创建提取视频详情函数
-        fetchVideo = getVideo(target, list)
+        fetchVideo = getVideo(targetWin, list)
     })
 
-    ipcMain.on('single', (event, args) => {
-        console.log(args)
+    // 接收单视频信息
+    ipcMain.on('single', (event, targetVideo) => {
+        console.log('Get:', targetVideo.target)
+        msg.text(['done', targetVideo.target].join(': '))
+        targetVideos.push(targetVideo)
         fetchVideo()
+    })
+
+    // 订阅视频信息采集完成事件
+    $(document).on('video.done', () => {
+        msg.text('采集完所有视频，准备写入数据')
+
+        // 合并数据
+        videos = videos.map(video => {
+            let item = targetVideos.find(v => v.url == video.url)
+            if (item) {
+                // 添加视频下载地址
+                video.target = item.target
+                // title添加视频文件名后缀
+                video.title += path.extname(item.target).split('?')[0]
+                // title替换字符 / 为 -, 因为下载时 / 会被解析为路径
+                video.title.replace(/\//g, '-')
+            } 
+            return video
+        })
+
+        // 下载格式数据
+        let data = ''
+        // 下载文件路径
+        let filepath = path.resolve('./dest/list.txt')
+
+        // 合成下载数据
+        videos.forEach(video => {
+            if(video.target) {
+                data += `${video.target} dest/${video.title}\n`
+            }
+        })
+
+        // 写入下载数据到文件
+        fs.writeFile(filepath, data, 'utf8', err => {
+            err ? console.log(err.message) : console.log(filepath, 'done.')
+            if(err) {
+                msg.text(err.message)
+            }
+            else{
+                msg.text(['下载数据已写入: dest/list.txt', '请执行: npm run download'].join(' '))
+            }
+        })
     })
 
     // 尝试获取视频列表
     // 列表加载完成时 方可成功
-    getList.on('click', () => list.webContents.send('tryGetViodeList'))
+    getList.on('click', () => {
+        listWin.webContents.send('tryGetViodeList')
+        msg.text('视频列表采集完成，可以开始采集视频数据')
+    })
 
+    // 开始采集
     running.on('click', () => {
         if(!videos) {
-            return
+            return msg.text('还没有采集视频列表')
         }
         fetchVideo()
     })

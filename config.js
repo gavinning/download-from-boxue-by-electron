@@ -12,7 +12,7 @@ module.exports = {
 
                 arr.push({
                     title: [episode, desc].join('-'),
-                    url: href
+                    url: [location.origin, href].join('')
                 })
             })
             return arr

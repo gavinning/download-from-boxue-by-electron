@@ -5,11 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <title>download-from-boxue-by-electron</title>
+<style type="text/css">
+.list-spider li {
+    font-size: 15px;
+    line-height: 1.8;
+}
+.msg{
+    color: #da1853;
+    font-size: 13px;
+}
+h2{
+    white-space: nowrap;
+    overflow: hidden;
+}
+</style>
 </head>
 <body>
 <h2>采集列表：
     <button id="getList">获取列表</button>
     <button id="running">开始采集</button>
+    <span id="msg" class="msg"></span>
 </h2>
 <div class="list-spider"></div>
 

@@ -1,0 +1,4 @@
+#!/bin/bash
+while read c1 c2; do
+    wget -c -t 5 "$c1" -O "$c2"
+done < dest/list.txt
