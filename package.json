@@ -1,0 +1,28 @@
+{
+  "name": "download-from-boxue-by-electron",
+  "version": "0.1.0",
+  "description": "download-from-boxue-by-electron",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gavinning/download-from-boxue-by-electron.git"
+  },
+  "keywords": [
+    "electron"
+  ],
+  "author": "gavinning",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gavinning/download-from-boxue-by-electron/issues"
+  },
+  "homepage": "https://github.com/gavinning/download-from-boxue-by-electron#readme",
+  "devDependencies": {
+    "electron": "^1.8.6"
+  },
+  "dependencies": {
+    "jquery": "^2.2.4"
+  }
+}
