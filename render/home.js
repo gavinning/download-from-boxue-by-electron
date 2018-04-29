@@ -59,6 +59,8 @@ function createSpiderList(list) {
 function getVideo(win, list) {
     var arr = list.slice(0)
 
+    // 采集单个视频详情
+    // 采集完成后发射采集完成事件
     return function () {
         if (arr.length === 0) {
             // 发布视频信息采集完成事件
@@ -91,7 +93,9 @@ window.onload = () => {
     ipcMain.on('single', (event, targetVideo) => {
         console.log('Get:', targetVideo.target)
         msg.text(['done', targetVideo.target].join(': '))
+        // 视频信息放进视频列表等待合并
         targetVideos.push(targetVideo)
+        // 递归采集下一个视频信息
         fetchVideo()
     })
 
