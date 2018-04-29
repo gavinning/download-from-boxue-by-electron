@@ -24,6 +24,6 @@
     "electron": "^1.8.6"
   },
   "dependencies": {
-    "jquery": "^2.2.4"
+    "jquery": "~> 3.0.0"
   }
 }
