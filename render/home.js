@@ -45,13 +45,17 @@ function createVideoWindow() {
 }
 
 // 创建可下载视频列表
-function createSpiderList(list) {
+function createSpiderList(list, titleText) {
     let spider = $('.list-spider')
     let ul = $('<ul></ul>')
+    let title = $(`<h3>${titleText}</h3>`)
     list.forEach(item => {
         ul.append($(`<li>${item.title}: <span style="color:#1f8af1">${item.url}</span></li>`))
     })
-    spider.html(ul)
+
+    spider.html('')
+    spider.append(title)
+    spider.append(ul)
 }
 
 // 获取视频详情
@@ -81,10 +85,10 @@ window.onload = () => {
     let videos, targetVideos = [], fetchVideo
 
     // 接收视频列表
-    ipcMain.on('videolist', function (event, list) {
+    ipcMain.on('videolist', function (event, list, title) {
         videos = list
         // 创建可视列表
-        createSpiderList(list)
+        createSpiderList(list, title)
         // 创建提取视频详情函数
         fetchVideo = getVideo(targetWin, list)
     })
